@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VPKAccess.Exceptions;
 
 namespace VPKAccess
 {
@@ -24,7 +25,32 @@ namespace VPKAccess
             FilePath = filePath;
         }
 
-        public byte[] GetDataForDirectoryEntry( VpkDirectoryEntry entry)
+        /// <summary>
+        /// Reads a VPK file for a header and attempts to determine its file version.
+        /// </summary>
+        /// <param name="path">Path to the file to be scanned.</param>
+        /// <returns>Integer version of the file read.</returns>
+        public static int DetermineVpkFileVersion(string path)
+        {
+            var stream = File.OpenRead(path);
+            using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8, true))
+            {
+                var sig = reader.ReadUInt32();
+                if (sig == 0x55aa1234)
+                {
+                    var version = reader.ReadUInt32();
+                    return (int)version;
+                }
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the file data for the provided <see cref="VpkDirectoryEntry"/>
+        /// </summary>
+        /// <param name="entry">The entry for which the data should be read.</param>
+        /// <returns>Byte array of file data.</returns>
+        public byte[] GetDataForDirectoryEntry(VpkDirectoryEntry entry)
         {
             if (entry.EntryLength > 0)
             {
