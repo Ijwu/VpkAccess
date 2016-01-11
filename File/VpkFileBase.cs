@@ -32,16 +32,18 @@ namespace VPKAccess
         /// <returns>Integer version of the file read.</returns>
         public static int DetermineVpkFileVersion(string path)
         {
-            var stream = File.OpenRead(path);
-            using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8, true))
+            using (var stream = File.OpenRead(path))
             {
-                var sig = reader.ReadUInt32();
-                if (sig == 0x55aa1234)
+                using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8, true))
                 {
-                    var version = reader.ReadUInt32();
-                    return (int)version;
+                    var sig = reader.ReadUInt32();
+                    if (sig == 0x55aa1234)
+                    {
+                        var version = reader.ReadUInt32();
+                        return (int) version;
+                    }
+                    return 0;
                 }
-                return 0;
             }
         }
 
