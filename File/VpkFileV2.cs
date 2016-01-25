@@ -37,7 +37,7 @@ namespace VPKAccess
         /// Accommodates for archive indices of 0x7fff, only present in v2 files.
         /// </summary>
         /// <param name="stream">Stream from which to read in the file tree.</param>
-        protected virtual void ReadFileTree(Stream stream)
+        protected override void ReadFileTree(Stream stream)
         {
             using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
             {
